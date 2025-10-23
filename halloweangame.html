@@ -1,0 +1,176 @@
+START= """
+<!DOCTYPE html>
+<html>
+<head>
+<title>Halloweenská cesta k dýni</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #1a1a1a;
+    margin: 0;
+    font-family: sans-serif;
+    color: white;
+  }
+  #game-container {
+    text-align: center;
+  }
+  #game-board {
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(10, 40px);
+    gap: 2px;
+    border: 2px solid orange;
+    margin: 2px auto; /* Adjusted margin */
+  }
+  .cell {
+    background-color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    cursor: pointer;
+    user-select: none; /* Prevent text selection */
+  }
+  .wall {
+    background-color: green; /* Slime color */
+    cursor: not-allowed;
+  }
+  .start {
+    background-color: green; /* Keep start visible */
+    font-size: 20px; /* Adjusted font size for text */
+    color: red !important; /* Added !important for testing */
+    font-weight: bold; /* Make text bold */
+  }
+  .end {
+    background-color: orange;
+    font-size: 30px; /* Increased emoji size */
+  }
+  .path {
+    background-color: yellow;
+  }
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: orange;
+    border: none;
+    color: black;
+    border-radius: 5px;
+    margin-top: 20px; /* Adjusted margin */
+  }
+  h1 {
+      margin-bottom: 10px; /* Adjusted margin */
+  }
+</style>
+</head>
+<body>
+
+<div id="game-container">
+  <h1>Najdi cestu k dýni!</h1>
+  <div id="game-board"></div>
+  <p id="message"></p>
+  <button onclick="resetGame()">Restartovat hru</button>
+</div>
+
+<script>
+  const boardSize = 10;
+  const board = [];
+  const gameBoardElement = document.getElementById('game-board');
+  const messageElement = document.getElementById('message');
+  let gameOver = false;
+
+  function generateMaze() {
+    for (let i = 0; i < boardSize; i++) {
+      board[i] = [];
+      for (let j = 0; j < boardSize; j++) {
+        board[i][j] = Math.random() < 0.25 ? 'wall' : 'empty';
+      }
+    }
+    board[0][0] = 'start';
+    board[boardSize - 1][boardSize - 1] = 'end';
+
+    // Simple path assurance
+    let currentRow = 0;
+    let currentCol = 0;
+    while (currentRow < boardSize - 1 || currentCol < boardSize - 1) {
+        board[currentRow][currentCol] = 'empty';
+        if (currentRow < boardSize - 1 && (currentCol === boardSize - 1 || Math.random() < 0.6)) {
+            currentRow++;
+        } else if (currentCol < boardSize - 1) {
+            currentCol++;
+        }
+    }
+     board[boardSize - 1][boardSize - 1] = 'end';
+  }
+
+  function drawBoard() {
+    gameBoardElement.innerHTML = '';
+    for (let i = 0; i < boardSize; i++) {
+      for (let j = 0; j < boardSize; j++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.row = i;
+        cell.dataset.col = j;
+
+        if (board[i][j] === 'wall') {
+          cell.classList.add('wall');
+        } else if (board[i][j] === 'start') {
+          cell.classList.add('start');
+          cell.textContent = 'START'; // Changed from House emoji to text
+        } else if (board[i][j] === 'end') {
+          cell.classList.add('end');
+          cell.textContent = '🎃'; // Pumpkin emoji
+        } else {
+          cell.classList.add('empty'); // Ensure empty cells have the empty class
+        }
+
+        cell.addEventListener('click', handleCellClick);
+        gameBoardElement.appendChild(cell);
+      }
+    }
+  }
+
+  function handleCellClick(event) {
+    if (gameOver) return;
+
+    const row = parseInt(event.target.dataset.row);
+    const col = parseInt(event.target.dataset.col);
+
+    const cellType = board[row][col];
+
+    if (cellType === 'wall') {
+      messageElement.textContent = 'Narazil jsi na zeď! Hra se restartuje.';
+      gameOver = true; // Prevent further clicks immediately
+      setTimeout(resetGame, 1500);
+    } else if (cellType === 'empty') {
+      event.target.classList.add('path');
+      messageElement.textContent = '';
+    } else if (cellType === 'end') {
+      messageElement.textContent = 'Našel jsi cestu k dýni! Gratuluji!';
+      gameOver = true;
+    }
+     // Clear message for start cell clicks
+     if (cellType === 'start') {
+        messageElement.textContent = '';
+     }
+  }
+
+  function resetGame() {
+    messageElement.textContent = '';
+    gameOver = false;
+    generateMaze();
+    drawBoard();
+  }
+
+  // Initialize the game
+  resetGame();
+
+</script>
+
+</body>
+</html>
+"""
+Kliknutím na obrazovku vyznačíte cestu k Dýni (Nedotýkej se slizu)
