@@ -16,8 +16,8 @@
 
 
 -- Dumping database structure for s16035_SCRP
-CREATE DATABASE IF NOT EXISTS `s16035_SCRP` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
-USE `s16035_SCRP`;
+CREATE DATABASE IF NOT EXISTS `s1_dbblue` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+USE `s1_dbblue`;
 
 -- Dumping data for table s16035_SCRP.addon_account: ~31 rows (approximately)
 INSERT INTO `addon_account` (`name`, `label`, `shared`) VALUES
